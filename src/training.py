@@ -45,12 +45,17 @@ def get_paths(signature):
 def do_research(signature):
     dataset_path = get_paths(signature)
 
+    # Create the result dataframe
+    result_columns = ['file', 'model', 'train_accuracy', 'test_accuracy']
+
+    result_df = pd.DataFrame(columns=result_columns)
+
     # Iterate from all csv files in the folder to load and train the model
     for file in os.listdir(dataset_path):
-        if not file.endswith(".csv"):
+        if not file.endswith(".csv") or "result" in file:
             continue
 
-        print(f"Training on {file}:")
+        print(f"Training on {file}")
 
         # Load the data from the csv file and split based on the 'is_test' column
         df = pd.read_csv(os.path.join(dataset_path, file))
@@ -76,5 +81,15 @@ def do_research(signature):
         for model in MODELS.keys():
             train_accuracy, test_accuracy = train_model(model, X_train, y_train, X_test, y_test, num_folds)
 
-            # Print the results
-            print(f"{model}: {train_accuracy} - {test_accuracy}")
+            # Add new row to the result dataframe
+            result_df = result_df.append({
+                'file': file,
+                'model': model,
+                'train_accuracy': train_accuracy,
+                'test_accuracy': test_accuracy
+            }, ignore_index=True)
+
+    print("Done training")
+
+    # Export the result dataframe to a csv file
+    result_df.to_csv(os.path.join(dataset_path, f"result.csv"), index=False)
