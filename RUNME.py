@@ -8,11 +8,11 @@ SIGNATURE = 'ENTER_YOUR_SIGNATURE_HERE'
 
 # You can also enter signature as command line argument
 if len(sys.argv) > 1:
-    SIGNATURE = sys.argv[2]
+    SIGNATURE = sys.argv[1]
 
 # You can enter your generate option as command line argument or input
 if len(sys.argv) > 2:
-    do_generate_data = sys.argv[3]
+    do_generate_data = sys.argv[2]
 else:
     do_generate_data = input('Enter "YES" to generate data: ')
 
