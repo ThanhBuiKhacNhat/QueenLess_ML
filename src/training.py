@@ -82,12 +82,7 @@ def do_research(signature):
             train_accuracy, test_accuracy = train_model(model, X_train, y_train, X_test, y_test, num_folds)
 
             # Add new row to the result dataframe
-            result_df = result_df.append({
-                'file': file,
-                'model': model,
-                'train_accuracy': train_accuracy,
-                'test_accuracy': test_accuracy
-            }, ignore_index=True)
+            result_df.loc[len(result_df)] = [file, model, train_accuracy, test_accuracy]
 
     print("Done training")
 

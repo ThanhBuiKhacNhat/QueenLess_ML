@@ -90,3 +90,11 @@ python3 RUNME.py
 Or you can also click the 'run' button in your IDE.
 
 Note: If you want to run the project with the 'run' button, you should specify the environment in your IDE to the virtual environment you have just created.
+
+### Update the new version
+
+To update to a new version of the project, you run the script:
+
+```bash
+git pull
+```

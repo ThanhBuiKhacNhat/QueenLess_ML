@@ -30,17 +30,17 @@ def calc_mfcc(audio_file):
     # Calculate MFCCs
     s_mfcc = librosa.feature.mfcc(
         S=librosa.power_to_db(S),  # Pre-computed Mel spectrogram
-        n_mfcc=40,           # Number of MFCC coefficients to compute
-        dct_type=2,          # Type of Discrete Cosine Transform
-        norm='ortho',        # Type of normalization to use ('ortho', 'slaney', or None)
-        lifter=22,           # Lifter parameter to apply to MFCCs
-        n_fft=512,           # Length of the FFT window
-        hop_length=512,      # Hop length for the STFT
-        win_length=256,      # Length of the window function
-        window='hann',       # Window function type ('hann', 'hamming', etc.)
-        center=True,         # Whether to center the frames on time or not
-        pad_mode='reflect',  # Padding mode for short frames
-        power=2.0,           # Exponent for the magnitude spectrogram (typically 2 for power)
+        n_mfcc=40,                 # Number of MFCC coefficients to compute
+        dct_type=2,                # Type of Discrete Cosine Transform
+        norm='ortho',              # Type of normalization to use ('ortho', 'slaney', or None)
+        lifter=22,                 # Lifter parameter to apply to MFCCs
+        n_fft=512,                 # Length of the FFT window
+        hop_length=512,            # Hop length for the STFT
+        win_length=256,            # Length of the window function
+        window='hann',             # Window function type ('hann', 'hamming', etc.)
+        center=True,               # Whether to center the frames on time or not
+        pad_mode='reflect',        # Padding mode for short frames
+        power=2.0,                 # Exponent for the magnitude spectrogram (typically 2 for power)
     )
 
     # Collect the features for the mel spectrogram method
