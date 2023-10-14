@@ -84,7 +84,7 @@ def do_research(signature):
             # Add new row to the result dataframe
             result_df.loc[len(result_df)] = [file, model, train_accuracy, test_accuracy]
 
-    print("Done training")
+            # Export the result dataframe to a csv file
+            result_df.to_csv(os.path.join(dataset_path, f"result.csv"), index=False)
 
-    # Export the result dataframe to a csv file
-    result_df.to_csv(os.path.join(dataset_path, f"result.csv"), index=False)
+    print("Done training")
