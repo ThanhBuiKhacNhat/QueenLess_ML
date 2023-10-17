@@ -6,11 +6,11 @@ from src.training import do_research
 # The data will be exported after processing and imported when training from the folder with this name
 SIGNATURE = 'ENTER_YOUR_SIGNATURE_HERE'
 
-# You can also enter signature as command line argument
+# You can also specify your signature as command line's first argument
 if len(sys.argv) > 1:
     SIGNATURE = sys.argv[1]
 
-# You can enter your generate option as command line argument or input
+# You can enter your generate option by input or specify it as command line's second argument
 if len(sys.argv) > 2:
     do_generate_data = sys.argv[2]
 else:

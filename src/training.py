@@ -1,32 +1,38 @@
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import GridSearchCV
-import pandas as pd
 import os
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import RepeatedStratifiedKFold, RandomizedSearchCV
 from .models import MODELS, get_model
 
 
-def train_model(estimator, X_train, y_train, X_test, y_test, num_folds):
+def train_model(estimator, X_train, y_train, X_test, y_test):
     # Get the params grid for the current model
-    grid = MODELS[estimator]['grid']
+    dist = MODELS[estimator]['distribution']
 
     # Get model
     model = get_model(estimator)
 
+    # Define evaluation
+    cv = RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=1)
+
     # Perform grid search for the model
-    grid_search = GridSearchCV(estimator=model, param_grid=grid, refit=True,
-                               cv=num_folds, scoring='accuracy', n_jobs=-1)
+    random_search = RandomizedSearchCV(
+        model, param_distributions=dist, n_iter=100, cv=cv,
+        scoring='accuracy', verbose=0, n_jobs=-1, random_state=1
+    )
 
     # Fit the GridSearchCV object to the data.
-    grid_search.fit(X_train, y_train)
+    random_search.fit(X_train, y_train)
 
-    # Get best score and best estimator
-    train_accuracy = grid_search.best_score_
-    best_model = grid_search.best_estimator_
+    # Get best score on training data and best model & best params
+    train_accuracy = random_search.best_score_
+    best_model = random_search.best_estimator_
+    best_params = random_search.best_params_
 
     # Evaluate on the test data
     test_accuracy = best_model.score(X_test, y_test)
 
-    return train_accuracy, test_accuracy
+    return train_accuracy, test_accuracy, best_params
 
 
 def get_paths(signature):
@@ -55,6 +61,11 @@ def do_research(signature):
         if not file.endswith(".csv") or "result" in file:
             continue
 
+        accepted = input(f'Enter "YES" to do research on {file}: ')
+
+        if accepted != 'YES':
+            continue
+
         print(f"Training on {file}")
 
         # Load the data from the csv file and split based on the 'is_test' column
@@ -75,14 +86,23 @@ def do_research(signature):
         X_test = scaler.fit_transform(X_test)
         y_test = df_test['label']
 
-        num_folds = 10
-
         # Iterate through all models
         for model in MODELS.keys():
-            train_accuracy, test_accuracy = train_model(model, X_train, y_train, X_test, y_test, num_folds)
+            # Get name of the model
+            model_name = MODELS[model]['name']
+
+            # Train the model
+            print(f"Training {model_name}")
+            train_accuracy, test_accuracy, best_params = train_model(model, X_train, y_train, X_test, y_test)
+
+            # Print out result
+            print(f"Train accuracy: {train_accuracy}")
+            print(f"Test accuracy: {test_accuracy}")
+            print(f"Best params: {best_params}")
+            print(f"Done training {model_name}")
 
             # Add new row to the result dataframe
-            result_df.loc[len(result_df)] = [file, model, train_accuracy, test_accuracy]
+            result_df.loc[len(result_df)] = [file, model_name, train_accuracy, test_accuracy]
 
             # Export the result dataframe to a csv file
             result_df.to_csv(os.path.join(dataset_path, f"result.csv"), index=False)
