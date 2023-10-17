@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.stats import uniform
 
-# Define the hyperparameter grid for logistic regression
+
 LOGISTIC_REGRESSION_DIST = {
     'C': uniform(loc=0, scale=10),
     'penalty': ['l2'],

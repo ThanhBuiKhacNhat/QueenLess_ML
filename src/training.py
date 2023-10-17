@@ -48,6 +48,29 @@ def get_paths(signature):
     return dataset_path
 
 
+def get_dataset(file_path):
+    # Load the data from the csv file and split based on the 'is_test' column
+    df = pd.read_csv(file_path)
+    df_train = df[df['is_test'] == 0].drop(columns=['is_test'])
+    df_test = df[df['is_test'] == 1].drop(columns=['is_test'])
+
+    # Create the scaler object for StandardScaler
+    scaler = StandardScaler()
+
+    # Extract the features and labels from the df_train
+    X_train = df_train.drop(columns=['label'])
+    X_train = scaler.fit_transform(X_train)
+    y_train = df_train['label']
+
+    # Extract the features and labels from the df_test
+    X_test = df_test.drop(columns=['label'])
+    X_test = scaler.fit_transform(X_test)
+    y_test = df_test['label']
+
+    # Return the train and test set
+    return X_train, y_train, X_test, y_test
+
+
 def do_research(signature):
     dataset_path = get_paths(signature)
 
@@ -68,23 +91,8 @@ def do_research(signature):
 
         print(f"Training on {file}")
 
-        # Load the data from the csv file and split based on the 'is_test' column
-        df = pd.read_csv(os.path.join(dataset_path, file))
-        df_train = df[df['is_test'] == 0].drop(columns=['is_test'])
-        df_test = df[df['is_test'] == 1].drop(columns=['is_test'])
-
-        # Create the scaler object for StandardScaler
-        scaler = StandardScaler()
-
-        # Extract the features and labels from the df_train
-        X_train = df_train.drop(columns=['label'])
-        X_train = scaler.fit_transform(X_train)
-        y_train = df_train['label']
-
-        # Extract the features and labels from the df_test
-        X_test = df_test.drop(columns=['label'])
-        X_test = scaler.fit_transform(X_test)
-        y_test = df_test['label']
+        # Load the dataset and split into train and test set
+        X_train, y_train, X_test, y_test = get_dataset(os.path.join(dataset_path, file))
 
         # Iterate through all models
         for model in MODELS.keys():
