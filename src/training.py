@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import RepeatedStratifiedKFold, RandomizedSearchCV
+from sklearn.model_selection import RepeatedStratifiedKFold, RandomizedSearchCV, KFold
 from .models import MODELS, get_model
 
 
@@ -13,7 +13,8 @@ def train_model(estimator, X_train, y_train, X_test, y_test):
     model = get_model(estimator)
 
     # Define evaluation
-    cv = RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=1)
+    # cv = RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=1)
+    cv = KFold(n_splits=10, shuffle=True, random_state=1)
 
     # Perform grid search for the model
     random_search = RandomizedSearchCV(
