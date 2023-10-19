@@ -1,11 +1,13 @@
 import os
+import time
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import RepeatedStratifiedKFold, RandomizedSearchCV, KFold
+from sklearn.model_selection import RandomizedSearchCV, KFold
 from .models import MODELS, get_model
 
 
 def train_model(estimator, X_train, y_train, X_test, y_test):
+
     # Get the params grid for the current model
     dist = MODELS[estimator]['distribution']
 
@@ -13,13 +15,13 @@ def train_model(estimator, X_train, y_train, X_test, y_test):
     model = get_model(estimator)
 
     # Define evaluation
-    # cv = RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=1)
     cv = KFold(n_splits=10, shuffle=True, random_state=1)
 
     # Perform grid search for the model
+    n_iter = 30 if estimator != 'svm' else 10
     random_search = RandomizedSearchCV(
-        model, param_distributions=dist, n_iter=100, cv=cv,
-        scoring='accuracy', verbose=0, n_jobs=-1, random_state=1
+        model, param_distributions=dist, n_iter=n_iter, cv=cv,
+        scoring='accuracy', verbose=3, n_jobs=4, random_state=1
     )
 
     # Fit the GridSearchCV object to the data.
@@ -72,48 +74,50 @@ def get_dataset(file_path):
     return X_train, y_train, X_test, y_test
 
 
-def do_research(signature):
-    dataset_path = get_paths(signature)
+def do_research(signature, dataset_file):
+    # Get dataset file
+    export_path = get_paths(signature)
+    dataset_path = os.path.join(export_path, dataset_file + '.csv')
+
+    # Check if the file exists
+    assert os.path.exists(dataset_path) and os.path.isfile(dataset_path)
 
     # Create the result dataframe
     result_columns = ['file', 'model', 'train_accuracy', 'test_accuracy']
-
     result_df = pd.DataFrame(columns=result_columns)
 
-    # Iterate from all csv files in the folder to load and train the model
-    for file in os.listdir(dataset_path):
-        if not file.endswith(".csv") or "result" in file:
-            continue
+    # Load the dataset and split into train and test set
+    X_train, y_train, X_test, y_test = get_dataset(dataset_path)
 
-        accepted = input(f'Enter "YES" to do research on {file}: ')
+    # Create a log file for timing the training process
+    log_file = os.path.join(export_path, f"log_{dataset_file}.txt")
+    with open(log_file, 'w') as f:
+        f.write(f"Log for {dataset_file} training:\n")
 
-        if accepted != 'YES':
-            continue
+    # Iterate through all models
+    for model in MODELS.keys():
+        # Get name of the model
+        model_name = MODELS[model]['name']
 
-        print(f"Training on {file}")
+        # Train the model
+        start_time = time.time()
+        print(f"Training {model_name}")
+        train_accuracy, test_accuracy, best_params = train_model(model, X_train, y_train, X_test, y_test)
+        finish_time = time.time()
+        elapsed_time = finish_time - start_time
 
-        # Load the dataset and split into train and test set
-        X_train, y_train, X_test, y_test = get_dataset(os.path.join(dataset_path, file))
+        # Convert the elapsed time to hours, minutes, and seconds
+        hours, remainder = divmod(int(elapsed_time), 3600)
+        minutes, seconds = divmod(remainder, 60)
 
-        # Iterate through all models
-        for model in MODELS.keys():
-            # Get name of the model
-            model_name = MODELS[model]['name']
+        # Open the log file in append mode
+        with open(log_file, 'a') as f:
+            f.write(f"\nTraining {model_name} done in {hours}:{minutes}:{seconds}\n")
 
-            # Train the model
-            print(f"Training {model_name}")
-            train_accuracy, test_accuracy, best_params = train_model(model, X_train, y_train, X_test, y_test)
+        # Add new row to the result dataframe
+        result_df.loc[len(result_df)] = [dataset_file, model_name, train_accuracy, test_accuracy]
 
-            # Print out result
-            print(f"Train accuracy: {train_accuracy}")
-            print(f"Test accuracy: {test_accuracy}")
-            print(f"Best params: {best_params}")
-            print(f"Done training {model_name}")
+        # Export the result dataframe to a csv file
+        result_df.to_csv(os.path.join(export_path, f"result.csv"), index=False)
 
-            # Add new row to the result dataframe
-            result_df.loc[len(result_df)] = [file, model_name, train_accuracy, test_accuracy]
-
-            # Export the result dataframe to a csv file
-            result_df.to_csv(os.path.join(dataset_path, f"result.csv"), index=False)
-
-    print("Done training")
+    print("Done training all models")

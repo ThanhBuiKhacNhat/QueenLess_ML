@@ -17,9 +17,12 @@ def is_positive_integer(input_str):
         return False
 
 
-def crop_audio(input_file, output_folder, segment_length):
-    # List to store all features of all segments in this audio
-    features = []
+OVERLAP_PROPORTION = 1/3
+
+
+def crop_audio(input_file, output_folder, segment_length, overlap=False):
+    # Calculate overlap length
+    overlap_length = int(segment_length * OVERLAP_PROPORTION) if overlap else 0
 
     # Load the audio file
     audio = AudioSegment.from_file(input_file)
@@ -28,16 +31,22 @@ def crop_audio(input_file, output_folder, segment_length):
     total_length = len(audio)
 
     # Calculate the number of segments
-    num_segments = total_length // segment_length
+    num_segments = len(audio) // (segment_length - overlap_length)
+
+    # Remove the last segment if its length < segment_length
+    remaining_length = total_length - (num_segments - 1) * (segment_length - overlap_length)
+    if remaining_length < segment_length:
+        num_segments -= 1
 
     # Get the name of the input file without the extension (.wav)
     input_file_name = os.path.splitext(os.path.basename(input_file))[0]
 
-    # Crop and export each segment
+    # Crop and export features of all segments
+    features = []
     for i in tqdm(range(num_segments), desc=f"{input_file_name}", ascii=False, ncols=100):
         # Get the segment from the original audio
-        start_time = i * segment_length
-        end_time = (i + 1) * segment_length
+        start_time = i * (segment_length - overlap_length)
+        end_time = start_time + segment_length
         segment = audio[start_time:end_time]
 
         # Create the segment audio file
@@ -58,7 +67,7 @@ def crop_audio(input_file, output_folder, segment_length):
     return features
 
 
-def crop_folder_audios(input_folder, output_folder, segment_length):
+def crop_folder_audios(input_folder, output_folder, segment_length, overlap=False):
     # List to store all features, labels and is_tests of all audios in this folder
     features = []
 
@@ -70,7 +79,7 @@ def crop_folder_audios(input_folder, output_folder, segment_length):
         # Check if it is a file
         if os.path.isfile(file_path):
             # Get the features from the audio file
-            sub_features = crop_audio(file_path, output_folder, segment_length)
+            sub_features = crop_audio(file_path, output_folder, segment_length, overlap)
 
             # Concat the sub features and labels to the features and labels list
             features.extend(sub_features)
@@ -140,7 +149,10 @@ def export_data(features, labels, is_tests, output_path):
     print("Successfully export all features and labels to csv files.")
 
 
-def generate_data(signature):
+def generate_data(signature, segment_length=2, overlap=False):
+    # Check for valid segment length
+    assert is_positive_integer(segment_length)
+
     # List to store all features, labels and is_tests of all folders in the dataset
     features = []
     labels = []
@@ -148,17 +160,6 @@ def generate_data(signature):
 
     # Get the absolute path to the "dataset" and "output" folder
     dataset_path, output_path = get_paths(signature)
-
-    # Get the segment length for this folder from user
-    user_input = input(f"Enter the segment length (in ms) for audios: ")
-    while not is_positive_integer(user_input):
-        if len(user_input) == 0:
-            return
-
-        print("The input is not a positive integer.")
-        user_input = input(f"Enter the segment length (in ms) for audios: ")
-
-    segment_length = int(user_input)
 
     # Iterate through all items
     for folder in os.listdir(dataset_path):
@@ -175,7 +176,7 @@ def generate_data(signature):
         print(f"Start generate data for {input_folder}.")
 
         # Get the features, labels and is_tests from the audios in this folder
-        sub_features = crop_folder_audios(folder_path, output_path, segment_length)
+        sub_features = crop_folder_audios(folder_path, output_path, segment_length * 1000, overlap)
 
         # Check if this folder is NoQueen or Queen; is_test or not
         label = 0 if "NoQueen" in folder else 1
@@ -187,7 +188,7 @@ def generate_data(signature):
         is_tests.extend([is_test] * len(sub_features))
 
         print(f"Complete generate data for {input_folder} "
-              f"with the segment length of {segment_length // 1000}s.")
+              f"with the segment length of {segment_length}s.")
 
     print("Complete generate data for all folders in the dataset.")
 

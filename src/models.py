@@ -1,9 +1,9 @@
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier
 from xgboost import XGBClassifier
+from sklearn.svm import SVC
 from .model_distributions import *
 
 
@@ -13,9 +13,6 @@ def get_model(estimator):
 
     if estimator == 'knn':
         return KNeighborsClassifier()
-
-    if estimator == 'svm':
-        return SVC()
 
     if estimator == 'decision_tree':
         return DecisionTreeClassifier()
@@ -29,6 +26,9 @@ def get_model(estimator):
     if estimator == 'xgboost':
         return XGBClassifier()
 
+    if estimator == 'svm':
+        return SVC()
+
     raise ValueError('Invalid model name: {}'.format(estimator))
 
 
@@ -40,10 +40,6 @@ MODELS = {
     'knn': {
         'name': 'K-Nearest Neighbors',
         'distribution': KNN_DIST
-    },
-    'svm': {
-        'name': 'Support Vector Machine',
-        'distribution': SVM_DIST
     },
     'decision_tree': {
         'name': 'Decision Tree',
@@ -60,5 +56,9 @@ MODELS = {
     'xgboost': {
         'name': 'XGBoost',
         'distribution': XGBOOST_DIST
+    },
+    'svm': {
+        'name': 'Support Vector Machine',
+        'distribution': SVM_DIST
     }
 }

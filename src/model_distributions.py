@@ -1,9 +1,8 @@
-import numpy as np
-from scipy.stats import uniform
+import scipy.stats as st
 
 
 LOGISTIC_REGRESSION_DIST = {
-    'C': uniform(loc=0, scale=10),
+    'C': st.uniform(loc=0, scale=10),
     'penalty': ['l2'],
     'solver': ['liblinear', 'newton-cg', 'lbfgs', 'sag', 'saga'],
     'max_iter': [100, 200, 300, 400, 500],
@@ -15,13 +14,6 @@ KNN_DIST = {
     'algorithm': ['auto', 'ball_tree', 'kd_tree', 'brute'],
     'leaf_size': [20, 30, 40, 50, 60],
     'p': [1, 2]
-}
-
-SVM_DIST = {
-    'C': uniform(loc=0, scale=10),
-    'kernel': ['linear', 'poly', 'rbf', 'sigmoid'],
-    'degree': [2, 3, 4, 5],
-    'gamma': ['scale', 'auto'] + list(np.logspace(-4, 3, 8))
 }
 
 DECISION_TREE_DIST = {
@@ -54,4 +46,11 @@ XGBOOST_DIST = {
     'learning_rate': [0.01, 0.1, 0.2, 0.3, 1.0],
     'subsample': [0.7, 0.8, 0.9, 1.0],
     'min_child_weight': [1, 2, 3, 4],
+}
+
+SVM_DIST = {
+    'C': st.expon(scale=1.),
+    # 'kernel': ['linear', 'poly', 'rbf', 'sigmoid'],
+    # 'gamma': ['scale', 'auto'] + list(st.expon(scale=.1))
+    'gamma': st.expon(scale=.1)
 }
