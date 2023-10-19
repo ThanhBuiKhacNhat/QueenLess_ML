@@ -112,7 +112,8 @@ def do_research(signature, dataset_file):
 
         # Open the log file in append mode
         with open(log_file, 'a') as f:
-            f.write(f"\nTraining {model_name} done in {hours}:{minutes}:{seconds}\n")
+            f.write(f"\nTraining {model_name} done in {hours}:{minutes}:{seconds}\n"
+                    f"Best params: {best_params}\n" + "-" * 50 + "\n")
 
         # Add new row to the result dataframe
         result_df.loc[len(result_df)] = [dataset_file, model_name, train_accuracy, test_accuracy]
