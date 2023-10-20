@@ -3,11 +3,11 @@ import time
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import RandomizedSearchCV, KFold
+import pickle
 from .models import MODELS, get_model
 
 
 def train_model(estimator, X_train, y_train, X_test, y_test):
-
     # Get the params grid for the current model
     dist = MODELS[estimator]['distribution']
 
@@ -17,7 +17,7 @@ def train_model(estimator, X_train, y_train, X_test, y_test):
     # Define evaluation
     cv = KFold(n_splits=10, shuffle=True, random_state=1)
 
-    # Perform grid search for the model
+    # Perform random search for the model
     n_iter = 30 if estimator != 'svm' else 10
     random_search = RandomizedSearchCV(
         model, param_distributions=dist, n_iter=n_iter, cv=cv,
@@ -35,10 +35,10 @@ def train_model(estimator, X_train, y_train, X_test, y_test):
     # Evaluate on the test data
     test_accuracy = best_model.score(X_test, y_test)
 
-    return train_accuracy, test_accuracy, best_params
+    return train_accuracy, test_accuracy, best_model, best_params
 
 
-def get_paths(signature):
+def get_path(signature):
     # Get the absolute path to the root folder of the project
     root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -76,11 +76,25 @@ def get_dataset(file_path):
 
 def do_research(signature, dataset_file):
     # Get dataset file
-    export_path = get_paths(signature)
-    dataset_path = os.path.join(export_path, dataset_file + '.csv')
+    export_path = get_path(signature)
+    dataset_path = os.path.join(export_path, "data", dataset_file + '.csv')
 
     # Check if the file exists
     assert os.path.exists(dataset_path) and os.path.isfile(dataset_path)
+
+    # Create folder for exporting the models
+    model_path = os.path.join(export_path, 'models')
+
+    # If this folder does not exist, create it
+    if not os.path.exists(model_path) or not os.path.isdir(model_path):
+        os.mkdir(model_path)
+
+    # Create folder for exporting the results
+    result_path = os.path.join(export_path, 'results')
+
+    # If this folder does not exist, create it
+    if not os.path.exists(result_path) or not os.path.isdir(result_path):
+        os.mkdir(result_path)
 
     # Create the result dataframe
     result_columns = ['file', 'model', 'train_accuracy', 'test_accuracy']
@@ -90,9 +104,9 @@ def do_research(signature, dataset_file):
     X_train, y_train, X_test, y_test = get_dataset(dataset_path)
 
     # Create a log file for timing the training process
-    log_file = os.path.join(export_path, f"log_{dataset_file}.txt")
+    log_file = os.path.join(result_path, f'logs_{dataset_file}.txt')
     with open(log_file, 'w') as f:
-        f.write(f"Log for {dataset_file} training:\n")
+        f.write(f"Logs for {dataset_file} training:\n")
 
     # Iterate through all models
     for model in MODELS.keys():
@@ -102,7 +116,7 @@ def do_research(signature, dataset_file):
         # Train the model
         start_time = time.time()
         print(f"Training {model_name}")
-        train_accuracy, test_accuracy, best_params = train_model(model, X_train, y_train, X_test, y_test)
+        train_accuracy, test_accuracy, best_model, best_params = train_model(model, X_train, y_train, X_test, y_test)
         finish_time = time.time()
         elapsed_time = finish_time - start_time
 
@@ -115,10 +129,15 @@ def do_research(signature, dataset_file):
             f.write(f"\nTraining {model_name} done in {hours}:{minutes}:{seconds}\n"
                     f"Best params: {best_params}\n" + "-" * 50 + "\n")
 
+        # Save the model to a file
+        model_file = os.path.join(model_path, f"{model}.pkl")
+        with open(model_file, 'wb') as f:
+            pickle.dump(best_model, f)
+
         # Add new row to the result dataframe
         result_df.loc[len(result_df)] = [dataset_file, model_name, train_accuracy, test_accuracy]
 
         # Export the result dataframe to a csv file
-        result_df.to_csv(os.path.join(export_path, f"result.csv"), index=False)
+        result_df.to_csv(os.path.join(result_path, f"results.csv"), index=False)
 
     print("Done training all models")

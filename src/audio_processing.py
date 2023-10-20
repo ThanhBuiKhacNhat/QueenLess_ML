@@ -33,6 +33,10 @@ def crop_audio(input_file, output_folder, segment_length, overlap=False):
     # Calculate the number of segments
     num_segments = len(audio) // (segment_length - overlap_length)
 
+    # If the audio is shorter than the segment length, return an empty list
+    if num_segments == 0:
+        return []
+
     # Remove the last segment if its length < segment_length
     remaining_length = total_length - (num_segments - 1) * (segment_length - overlap_length)
     if remaining_length < segment_length:
@@ -110,6 +114,7 @@ def get_paths(signature):
 
     # Create the output folder
     os.makedirs(output_path)
+    output_path = os.path.join(output_path, "data")
 
     return dataset_path, output_path
 
