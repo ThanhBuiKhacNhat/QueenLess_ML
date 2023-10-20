@@ -28,6 +28,8 @@ Or you can also download the zip file.
 
 You can download the dataset and paper here: [Queenless Monitoring](https://fptuniversity-my.sharepoint.com/:f:/g/personal/hainhde170683_fpt_edu_vn/EqsOqSf3G0NCmTJzthxiv2YBcqnE6xqg4y0mLNDuOgzopw?e=fGTYwm).
 
+In the above link, you can download the zip file named `Queen_NoQueen.zip` for training and `Queen_NoQueen_Test.zip` for testing.
+
 After downloading, extract the zip file and put it in the project directory. The directory structure must look like this:
 
 ``` bash
@@ -35,19 +37,19 @@ Queenless_Monitoring
 ├── dataset
 │   ├── NoQueen
 │   ├── NoQueen_Kit
-│   ├── NoQueen_test
+│   ├── NoQueen_Test
 │   ├── Queen_Kit
 │   ├── Queen_Record
-│   └── Queen_test
+│   └── Queen_Test
 ├── RUNME.py
 ├── README.md
 └── requirements.txt
 ```
 
-Four folders: `NoQueen`, `NoQueen_Kit`, `Queen_Kit`, `Queen_Record` are in the zip file in the above link, but you have to create two folders `NoQueen_test` and `Queen_test` by yourself. Note that the name must be correct (case-sensitive). The content of each folder is as follows:
+Four folders: `NoQueen`, `NoQueen_Kit`, `Queen_Kit`, `Queen_Record` are in the `Queen_NoQueen.zip` file, but you have to create two folders `NoQueen_test` and `Queen_test` by yourself. Note that the name must be correct (case-sensitive). The content of each folder is as follows:
 
-- Select one file in `NoQueen` or `NoQueen_Kit` and move it to folder `NoQueen_test` (meaning that file cannot exist in folders `NoQueen` and `NoQueen_Kit` anymore).
-- Select one file in `Queen_Kit` or `Queen_Record` and move it to folder `Queen_test` (meaning that file cannot exist in folders `Queen_Kit` and `NoQueen_Record` anymore).
+- Select two files in `Queen_NoQueen_Test.zip` that are labeled have no queen and move it to folder `NoQueen_test`.
+- Select four files in `Queen_NoQueen_Test.zip` that are labeled have queen and move it to folder `Queen_test`.
 
 ### Create virtual environment
 
@@ -97,4 +99,36 @@ To update to a new version of the project, you run the script:
 
 ```bash
 git pull
+```
+
+### Final results
+
+The project structure after generating data and training models
+
+``` bash
+Queenless_Monitoring
+├── dataset
+├── env
+├── export
+│   └── SIGNATURE
+│       ├── data
+│       │   ├── d_mean.csv
+│       │   ├── d_merged.csv
+│       │   ├── d_std.csv
+│       │   ├── s_mean.csv
+│       │   ├── s_merged.csv
+│       │   └── s_std.csv
+│       ├── models
+│       │   ├── decision_tree.pkl
+│       │   ├── knn.pkl
+│       │   ├── logistic_regression.pkl
+│       │   ├── random_forest.pkl
+│       │   ├── svm.pkl
+│       │   └── xgboost.pkl
+│       └── results
+│           ├── logs.txt 
+│           └── results.csv
+├── RUNME.py
+├── README.md
+└── requirements.txt
 ```

@@ -20,10 +20,14 @@ OVERLAP = False
 # Dataset options: [d_mean, d_std, d_merged, s_mean, s_std, s_merged]
 DATASET = 's_merged'
 
+# Set this to True for training
+RESEARCH = True
+
 # END IMPORTANT ZONE #
 
 
 if GEN_DATA:
     generate_data(signature=SIGNATURE, segment_length=SEGMENT_LENGTH, overlap=OVERLAP)
 
-do_research(signature=SIGNATURE, dataset_file=DATASET)
+if RESEARCH:
+    do_research(signature=SIGNATURE, dataset_file=DATASET)

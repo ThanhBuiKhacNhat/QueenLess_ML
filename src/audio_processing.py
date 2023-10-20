@@ -115,6 +115,7 @@ def get_paths(signature):
     # Create the output folder
     os.makedirs(output_path)
     output_path = os.path.join(output_path, "data")
+    os.makedirs(output_path)
 
     return dataset_path, output_path
 
@@ -185,7 +186,7 @@ def generate_data(signature, segment_length=2, overlap=False):
 
         # Check if this folder is NoQueen or Queen; is_test or not
         label = 0 if "NoQueen" in folder else 1
-        is_test = 0 if "test" not in folder else 1
+        is_test = 0 if "Test" not in folder else 1
 
         # Extend the features, labels and is_tests list
         features.extend(sub_features)
