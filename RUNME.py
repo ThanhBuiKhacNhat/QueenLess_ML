@@ -17,6 +17,9 @@ SEGMENT_LENGTH = 2
 # True for using overlapped segments, False for using non-overlapped segments
 OVERLAP = False
 
+# Training options: [logistic_regression, knn, decision_tree, random_forest, extra_trees, xgboost, svm]
+MODEL_LIST = ['logistic_regression', 'knn', 'decision_tree', 'random_forest', 'extra_trees', 'xgboost', 'svm']
+
 # Dataset options: [d_mean, d_std, d_merged, s_mean, s_std, s_merged]
 DATASET = 's_merged'
 
@@ -30,4 +33,4 @@ if GEN_DATA:
     generate_data(signature=SIGNATURE, segment_length=SEGMENT_LENGTH, overlap=OVERLAP)
 
 if RESEARCH:
-    do_research(signature=SIGNATURE, dataset_file=DATASET)
+    do_research(signature=SIGNATURE, dataset_file=DATASET, model_list=MODEL_LIST)

@@ -74,7 +74,7 @@ def get_dataset(file_path):
     return X_train, y_train, X_test, y_test
 
 
-def do_research(signature, dataset_file):
+def do_research(signature, dataset_file, model_list=MODELS.keys()):
     # Get dataset file
     export_path = get_path(signature)
     dataset_path = os.path.join(export_path, "data", dataset_file + '.csv')
@@ -109,7 +109,7 @@ def do_research(signature, dataset_file):
         f.write(f"Logs for {dataset_file} training:\n")
 
     # Iterate through all models
-    for model in MODELS.keys():
+    for model in model_list:
         # Get name of the model
         model_name = MODELS[model]['name']
 
