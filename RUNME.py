@@ -1,12 +1,13 @@
 from src.audio_processing import generate_data
 from src.training import do_research
+from src.evaluate import evaluate
 
 
 # IMPORTANT ZONE: CONSTANTS FOR RUNTIME #
 
 # Change the signature for your experiment
 # The data will be exported after processing and imported when training from the folder with this name
-SIGNATURE = 'ENTER_YOUR_SIGNATURE_HERE'
+SIGNATURE = 'non_overlapped_2s'
 
 # True for generate new data, False for use existing data
 GEN_DATA = False
@@ -24,7 +25,10 @@ MODEL_LIST = ['logistic_regression', 'knn', 'decision_tree', 'random_forest', 'e
 DATASET = 's_merged'
 
 # Set this to True for training
-RESEARCH = True
+RESEARCH = False
+
+# Set this to True for testing
+TEST = True
 
 # END IMPORTANT ZONE #
 
@@ -34,3 +38,6 @@ if GEN_DATA:
 
 if RESEARCH:
     do_research(signature=SIGNATURE, dataset_file=DATASET, model_list=MODEL_LIST)
+
+if TEST:
+    evaluate(signature=SIGNATURE, dataset_file=DATASET)

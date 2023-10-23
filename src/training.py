@@ -43,7 +43,7 @@ def get_path(signature):
     root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
     # Create the path to the "export/signature" folder
-    dataset_path = os.path.join(root_path, f"export/{signature}")
+    dataset_path = os.path.join(root_path, "export", f"{signature}")
 
     # Check if this folder exists
     assert os.path.exists(dataset_path) and os.path.isdir(dataset_path)
