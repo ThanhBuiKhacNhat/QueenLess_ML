@@ -2,7 +2,7 @@
 > Queenless Monitoring: new MFCCs approach for feature extraction and hyperparameters tuning models in detecting the absence of queens bee by sound
 
 ## Introduction
-This repository supports cropping and extracting audio features from the dataset and then tuning hyperparameters for several machine learning models to evaluate the performance of each model. The only thing you need to do is install the required libraries and click 'run'.
+This repository supports splitting, extracting audio features, feature selection from the dataset and tuning hyperparameters for several machine learning models to evaluate the performance of each model. The only thing you need to do is install the required libraries and click 'run'.
 
 ## Guide
 
@@ -100,13 +100,13 @@ Note:
 
 ### Update the new version
 
-To update to a new version of the project, you run the script:
+To update to a new version of the project, run the script:
 
 ```bash
 git pull
 ```
 
-### Final results
+### Final project structure
 
 The project structure after generating data and training models
 
