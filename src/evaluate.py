@@ -42,12 +42,10 @@ def get_test_data(file_path):
 def evaluate(signature, dataset_file):
     # Get the absolute path to datasets and models
     data_path, model_path = get_path(signature)
-    print(data_path)
     assert os.path.exists(data_path) and os.path.isdir(data_path)  # Check if the folder exists
 
     # Get the absolute path to the specific dataset
     csv_file = os.path.join(data_path, f'{dataset_file}.csv')
-    print(csv_file)
     assert os.path.exists(csv_file) and os.path.isfile(csv_file)  # Check if the file exists
 
     # Get the list of all model files in the model folder
