@@ -26,7 +26,9 @@ Or you can also download the zip file.
 
 ### Download the dataset
 
-You can download the dataset and paper here: [Queenless Monitoring](https://fptuniversity-my.sharepoint.com/:f:/g/personal/hainhde170683_fpt_edu_vn/EqsOqSf3G0NCmTJzthxiv2YBcqnE6xqg4y0mLNDuOgzopw?e=fGTYwm).
+You can download the dataset and paper here: [Queenless Monitoring](https://fptuniversity-my.sharepoint.com/:f:/g/personal/hainhde170683_fpt_edu_vn/EqsOqSf3G0NCmTJzthxiv2YBcqnE6xqg4y0mLNDuOgzopw?e=fGTYwm). 
+
+In addition, you can get the training statistics and the results of the experiments [here](https://docs.google.com/spreadsheets/d/1rsPMrFoV7OyAkBHeVOlhnCXcu6J6t85suTIBVdy06LY/edit#gid=0).
 
 In the above link, you can download the zip file named `Queen_NoQueen.zip` for training and `Queen_NoQueen_Test.zip` for testing.
 
@@ -73,7 +75,9 @@ For Windows:
 .\env\Scripts\activate
 ```
 
-Note: If you want to deactivate the virtual environment, just type `deactivate` in your terminal.
+Note:
+- In Windows, if you get an error like this: `cannot be loaded because running scripts is disabled on this system`, you can run this command in your terminal: `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Unrestricted` and then type `Y` to accept.
+- If you want to deactivate the virtual environment, just type `deactivate` in your terminal.
 
 ### Install required libraries
 
@@ -83,15 +87,16 @@ pip install -r requirements.txt
 
 ### Run the project
 
-Note: You should change the **SIGNATURE** variable in the file `RUNME.py` before running it. The **SIGNATURE** is the name of the folder containing csv files that are extracted from audios and the results of your experiment.
-
 ```bash
 python3 RUNME.py
 ```
 
 Or you can also click the 'run' button in your IDE.
 
-Note: If you want to run the project with the 'run' button, you should specify the environment in your IDE to the virtual environment you have just created.
+Note:
+- You should change the **SIGNATURE** variable in the file `RUNME.py` before running it. The **SIGNATURE** is the name of the folder containing csv files that are extracted from audios and the results of your experiment.
+- Beside the **SIGNATURE**, there are many environment constants for runtime that you need to specify in the file `RUNME.py`. You can read the comments in the file to understand the meaning of each constant. 
+- If you want to run the project with the 'run' button, you should specify the environment in your IDE to the virtual environment you have just created.
 
 ### Update the new version
 
@@ -132,3 +137,5 @@ Queenless_Monitoring
 ├── README.md
 └── requirements.txt
 ```
+
+Have the best experience with our project!
